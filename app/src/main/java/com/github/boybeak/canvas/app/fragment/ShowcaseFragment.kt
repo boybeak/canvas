@@ -2,14 +2,12 @@ package com.github.boybeak.canvas.app.fragment
 
 import android.os.Bundle
 import android.util.Log
-import android.view.SurfaceView
 import android.view.View
 import android.view.View.OnClickListener
 import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.DialogFragment
-import com.github.boybeak.canvas.AbsCanvasView
+import com.github.boybeak.canvas.CanvasView
 import com.github.boybeak.canvas.ICanvasRenderer
-import com.github.boybeak.canvas.OpenGLRenderer
 import com.github.boybeak.canvas.app.R
 
 class ShowcaseFragment(private val renderer: ICanvasRenderer, private val actionText: String = "",
@@ -21,7 +19,7 @@ class ShowcaseFragment(private val renderer: ICanvasRenderer, private val action
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        view.findViewById<AbsCanvasView>(R.id.surfaceView).setRenderer(renderer)
+        view.findViewById<CanvasView>(R.id.surfaceView).setRenderer(renderer)
 
         view.findViewById<AppCompatButton>(R.id.actionBtn).apply {
             if (actionText.isNotEmpty()) {

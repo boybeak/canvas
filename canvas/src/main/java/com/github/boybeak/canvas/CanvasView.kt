@@ -5,7 +5,7 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.SurfaceView
 
-class AbsCanvasView : SurfaceView {
+open class CanvasView : SurfaceView {
 
     companion object {
         private const val TAG = "AbsCanvasView"
