@@ -3,23 +3,33 @@ package com.github.boybeak.canvas
 import android.graphics.Canvas
 import android.graphics.Rect
 import android.view.SurfaceHolder
+import com.github.boybeak.canvas.executor.IExecutor
 
-abstract class TwoDRenderer(@RenderMode renderMode: Int) : AbsRenderer(renderMode) {
+abstract class TwoDRenderer : AbsRenderer() {
     private var surfaceHolder: SurfaceHolder? = null
     private var dirtyRect = Rect()
-    override fun surfaceCreated(holder: SurfaceHolder) {
-        super.surfaceCreated(holder)
+
+    override fun onSurfaceCreated(holder: SurfaceHolder, executor: IExecutor) {
+        super.onSurfaceCreated(holder, executor)
         surfaceHolder = holder
     }
-    override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
-        super.surfaceChanged(holder, format, width, height)
+
+    override fun onSurfaceChanged(
+        holder: SurfaceHolder,
+        format: Int,
+        width: Int,
+        height: Int,
+        executor: IExecutor
+    ) {
+        super.onSurfaceChanged(holder, format, width, height, executor)
         dirtyRect.set(0, 0, width, height)
-        requestRender()
     }
-    override fun surfaceDestroyed(holder: SurfaceHolder) {
-        super.surfaceDestroyed(holder)
+
+    override fun onSurfaceDestroyed(holder: SurfaceHolder, executor: IExecutor) {
+        super.onSurfaceDestroyed(holder, executor)
         surfaceHolder = null
     }
+
     override fun onRequestRender() {
         surfaceHolder?.run {
             val canvas = surface.lockCanvas(dirtyRect)

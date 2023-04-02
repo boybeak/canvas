@@ -3,13 +3,14 @@ package com.github.boybeak.canvas
 import android.opengl.EGL14
 import android.util.Log
 import android.view.SurfaceHolder
+import com.github.boybeak.canvas.executor.IExecutor
 import javax.microedition.khronos.egl.EGL10
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.egl.EGLContext
 import javax.microedition.khronos.egl.EGLDisplay
 import javax.microedition.khronos.egl.EGLSurface
 
-abstract class OpenGLRenderer(@RenderMode renderMode: Int) : AbsRenderer(renderMode) {
+abstract class OpenGLRenderer() : AbsRenderer() {
 
     companion object {
         private const val TAG = "OpenGLRenderer"
@@ -61,35 +62,30 @@ abstract class OpenGLRenderer(@RenderMode renderMode: Int) : AbsRenderer(renderM
         egl.eglTerminate(display)
     }
 
-    override fun surfaceCreated(holder: SurfaceHolder) {
-        super.surfaceCreated(holder)
-        post {
-            createEGL(holder)
-        }
+    override fun onSurfaceCreated(holder: SurfaceHolder, executor: IExecutor) {
+        super.onSurfaceCreated(holder, executor)
+        executor.post { createEGL(holder) }
     }
 
-    override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
-        super.surfaceChanged(holder, format, width, height)
-        post { onSurfaceChanged(egl, width, height) }
-        requestRender()
+    override fun onSurfaceChanged(
+        holder: SurfaceHolder,
+        format: Int,
+        width: Int,
+        height: Int,
+        executor: IExecutor
+    ) {
+        super.onSurfaceChanged(holder, format, width, height, executor)
+        executor.post { onSurfaceChanged(egl, width, height) }
     }
 
-    override fun surfaceDestroyed(holder: SurfaceHolder) {
-        super.surfaceDestroyed(holder)
-        // Do not place this into post{} body, this lead to "requestBuffer:bufferQueue has no connected producer" problem
+    override fun onSurfaceDestroyed(holder: SurfaceHolder, executor: IExecutor) {
+        super.onSurfaceDestroyed(holder, executor)
         destroyEGL()
     }
 
     override fun onRequestRender() {
         onDrawFrame(egl)
         egl.eglSwapBuffers(display, eglSurface)
-    }
-
-    fun queueEvent(task: Runnable) {
-        post(task)
-    }
-    fun queueEvent(task: () -> Unit) {
-        post { task.invoke() }
     }
 
     abstract fun onSurfaceCreated(gl10: EGL10, config: EGLConfig)

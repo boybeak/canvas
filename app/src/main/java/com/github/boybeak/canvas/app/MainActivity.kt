@@ -9,9 +9,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.widget.AppCompatButton
-import com.github.boybeak.canvas.ICanvasRenderer
-import com.github.boybeak.canvas.OpenGLRenderer
-import com.github.boybeak.canvas.TwoDRenderer
+import com.github.boybeak.canvas.*
 import com.github.boybeak.canvas.app.fragment.Showcase2Fragment
 import com.github.boybeak.canvas.app.fragment.ShowcaseFragment
 import com.github.boybeak.canvas.app.renderer.ImageRenderer
@@ -35,7 +33,7 @@ class MainActivity : AppCompatActivity() {
             fun nextColorBit(): Int {
                 return random.nextInt(0xFF)
             }
-            showcase(object : TwoDRenderer(ICanvasRenderer.RENDER_MODE_WHEN_DIRTY) {
+            showcase(renderer = object : TwoDRenderer() {
                 override fun onDraw(canvas: Canvas) {
                     val r = nextColorBit()
                     val g = nextColorBit()
@@ -53,7 +51,7 @@ class MainActivity : AppCompatActivity() {
             fun nextColorBit(): Float {
                 return random.nextInt(100) / 100F
             }
-            showcase(SimpleOpenGLRenderer(ICanvasRenderer.RENDER_MODE_WHEN_DIRTY), text = "change") {
+            showcase(SimpleOpenGLRenderer(), text = "change") {
                 it.queueEvent {
                     val r = nextColorBit()
                     val g = nextColorBit()
@@ -67,7 +65,7 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "Click button to change color", Toast.LENGTH_LONG).show()
         }
         findViewById<AppCompatButton>(R.id.triangleBtn).setOnClickListener {
-            showcase(SimpleOpenGLRenderer(ICanvasRenderer.RENDER_MODE_WHEN_DIRTY), text = "Draw Triangle") {
+            showcase(SimpleOpenGLRenderer(), text = "Draw Triangle") {
                 it.queueEvent {
                     SimpleTriangle().draw()
                 }
@@ -75,7 +73,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
         findViewById<AppCompatButton>(R.id.moveBtn).setOnClickListener {
-            showcase(ShapeRenderer())
+            showcase(ShapeRenderer(), renderMode = ICanvasRenderer.RENDER_MODE_CONTINUOUSLY)
         }
         findViewById<AppCompatButton>(R.id.imageBtn).setOnClickListener {
             showcase(ImageRenderer(BitmapFactory.decodeResource(resources, R.drawable.dragon_ball)))
@@ -86,15 +84,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun <T : ICanvasRenderer> showcase(renderer: T, text: String = "", onClick: ((T) -> Unit)? = null) {
-        val listener = if (onClick != null) {
-            View.OnClickListener {
-                onClick.invoke(renderer)
-            }
-        } else {
-            null
-        }
-        ShowcaseFragment(renderer, text, listener).show(supportFragmentManager, TAG)
+    private fun <T : ICanvasRenderer> showcase(renderer: T, @RenderMode renderMode: Int = ICanvasRenderer.RENDER_MODE_WHEN_DIRTY,
+                                               text: String = "", onClick: ((CanvasView) -> Unit)? = null) {
+        ShowcaseFragment(renderer, text, renderMode, onClick).show(supportFragmentManager, TAG)
     }
 
 }

@@ -8,10 +8,12 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.DialogFragment
 import com.github.boybeak.canvas.CanvasView
 import com.github.boybeak.canvas.ICanvasRenderer
+import com.github.boybeak.canvas.RenderMode
 import com.github.boybeak.canvas.app.R
 
 class ShowcaseFragment(private val renderer: ICanvasRenderer, private val actionText: String = "",
-                       private val onClick: OnClickListener? = null) : DialogFragment(R.layout.fragment_showcase) {
+                       @RenderMode private val renderMode: Int = ICanvasRenderer.RENDER_MODE_WHEN_DIRTY,
+                       private val onClick: ((CanvasView) -> Unit)? = null) : DialogFragment(R.layout.fragment_showcase) {
 
     companion object {
         private const val TAG = "ShowcaseFragment"
@@ -19,14 +21,17 @@ class ShowcaseFragment(private val renderer: ICanvasRenderer, private val action
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        view.findViewById<CanvasView>(R.id.surfaceView).setRenderer(renderer)
+        val canvasView = view.findViewById<CanvasView>(R.id.surfaceView).apply {
+            setRenderer(renderer)
+            setRenderMode(renderMode)
+        }
 
         view.findViewById<AppCompatButton>(R.id.actionBtn).apply {
             if (actionText.isNotEmpty()) {
                 text = actionText
             }
             if (onClick != null) {
-                setOnClickListener(onClick)
+                setOnClickListener { onClick.invoke(canvasView) }
             } else {
                 setOnClickListener {
                     dismiss()
@@ -38,7 +43,6 @@ class ShowcaseFragment(private val renderer: ICanvasRenderer, private val action
     override fun onDestroy() {
         super.onDestroy()
         Log.d(TAG, "onDestroy")
-        renderer.stop()
     }
 
 }

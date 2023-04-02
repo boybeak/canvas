@@ -11,7 +11,7 @@ import javax.microedition.khronos.egl.EGL10
 import javax.microedition.khronos.egl.EGLConfig
 
 
-class ShapeRenderer : OpenGLRenderer(ICanvasRenderer.RENDER_MODE_CONTINUOUSLY) {
+class ShapeRenderer : OpenGLRenderer() {
 
     private val TAG = "MyGLRenderer"
     private var mTriangle: Triangle? = null
