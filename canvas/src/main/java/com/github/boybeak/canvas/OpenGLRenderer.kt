@@ -65,7 +65,7 @@ abstract class OpenGLRenderer : AbsRenderer() {
 
     override fun onSurfaceCreated(holder: SurfaceHolder, executor: RenderExecutor) {
         super.onSurfaceCreated(holder, executor)
-        executor.post { createEGL(holder) }
+        executor.runOnMyThread { createEGL(holder) }
     }
 
     override fun onSurfaceChanged(
@@ -76,12 +76,13 @@ abstract class OpenGLRenderer : AbsRenderer() {
         executor: RenderExecutor
     ) {
         super.onSurfaceChanged(holder, format, width, height, executor)
-        executor.post { onSurfaceChanged(egl, width, height) }
+        executor.runOnMyThread { onSurfaceChanged(egl, width, height) }
         executor.requestRender()
     }
 
     override fun onSurfaceDestroyed(holder: SurfaceHolder, executor: RenderExecutor) {
         super.onSurfaceDestroyed(holder, executor)
+        // Do not use post or runOnMyThread, this may cause no connected producer problem
         destroyEGL()
     }
 

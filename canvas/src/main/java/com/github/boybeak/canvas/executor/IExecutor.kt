@@ -7,4 +7,6 @@ interface IExecutor {
     fun post(r: Runnable)
     fun postDelayed(delayed: Long, r: Runnable)
     fun remove(r: Runnable)
+
+    fun runOnMyThread(r: Runnable)
 }

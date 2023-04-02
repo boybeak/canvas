@@ -34,4 +34,12 @@ open class Executor : IExecutor {
         handler.removeCallbacks(r)
     }
 
+    override fun runOnMyThread(r: Runnable) {
+        if (Thread.currentThread() == renderThread) {
+            r.run()
+        } else {
+            post(r)
+        }
+    }
+
 }
