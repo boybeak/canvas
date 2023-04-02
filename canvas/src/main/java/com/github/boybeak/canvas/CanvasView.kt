@@ -20,6 +20,7 @@ open class CanvasView : SurfaceView {
             renderer?.onRequestRender()
         }
     }
+    private val stateRememberCallback = StateRememberCallback()
 
     constructor(context: Context?) : super(context)
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
@@ -31,13 +32,14 @@ open class CanvasView : SurfaceView {
 
     init {
         holder.addCallback(renderExecutor)
+        holder.addCallback(stateRememberCallback)
     }
 
     fun setRenderer(renderer: ICanvasRenderer) {
         if (this.renderer != null) {
             throw IllegalStateException("Renderer has already set.")
         }
-        holder.addCallback(object : SurfaceHolder.Callback {
+        val callback = object : SurfaceHolder.Callback {
             override fun surfaceCreated(holder: SurfaceHolder) {
                 renderer.onSurfaceCreated(holder, renderExecutor)
             }
@@ -54,7 +56,10 @@ open class CanvasView : SurfaceView {
             override fun surfaceDestroyed(holder: SurfaceHolder) {
                 renderer.onSurfaceDestroyed(holder, renderExecutor)
             }
-        })
+        }
+        // Make sure that renderer create and init correctly
+        stateRememberCallback.perform(callback)
+        holder.addCallback(callback)
         this.renderer = renderer
     }
 
@@ -81,6 +86,60 @@ open class CanvasView : SurfaceView {
 
     fun queueEvent(event: Runnable) {
         renderExecutor.post(event)
+    }
+
+    private class StateRememberCallback : SurfaceHolder.Callback {
+
+        companion object {
+            private const val STATE_IDLE = 0
+            private const val STATE_CREATED = 1
+            private const val STATE_CHANGED = 2
+            private const val STATE_DESTROYED = -1
+        }
+
+        private var state = STATE_IDLE
+
+        private var createHolder: SurfaceHolder? = null
+
+        private var changeHolder: SurfaceHolder? = null
+        private var format: Int = 0
+        private var width: Int = 0
+        private var height: Int = 0
+
+        override fun surfaceCreated(holder: SurfaceHolder) {
+            state = STATE_CREATED
+            createHolder = holder
+        }
+
+        override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
+            state = STATE_CHANGED
+            changeHolder = holder
+            this.format = format
+            this.width = width
+            this.height = height
+        }
+
+        override fun surfaceDestroyed(holder: SurfaceHolder) {
+            state = STATE_DESTROYED
+            createHolder = null
+            changeHolder = null
+            format = 0
+            width = 0
+            height = 0
+        }
+
+        fun perform(callback: SurfaceHolder.Callback) {
+            when(state) {
+                STATE_CREATED -> {
+                    callback.surfaceCreated(createHolder!!)
+                }
+                STATE_CHANGED -> {
+                    callback.surfaceCreated(createHolder!!)
+                    callback.surfaceChanged(changeHolder!!, format, width, height)
+                }
+            }
+        }
+
     }
 
 }

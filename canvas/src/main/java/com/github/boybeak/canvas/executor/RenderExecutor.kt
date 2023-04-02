@@ -1,6 +1,5 @@
 package com.github.boybeak.canvas.executor
 
-import android.util.Log
 import android.view.SurfaceHolder
 import com.github.boybeak.canvas.ICanvasRenderer
 import com.github.boybeak.canvas.RenderMode
@@ -19,7 +18,7 @@ abstract class RenderExecutor : Executor(), SurfaceHolder.Callback {
                 return
             }
             onRequestRender()
-            if (renderMode == ICanvasRenderer.RENDER_MODE_CONTINUOUSLY) {
+            if (renderMode == ICanvasRenderer.RENDER_MODE_CONTINUOUSLY && isRunning()) {
                 post(this)
             }
         }
