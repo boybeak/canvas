@@ -18,7 +18,6 @@ abstract class RenderExecutor : Executor(), SurfaceHolder.Callback {
             if (!isSurfaceAvailable) {
                 return
             }
-            Log.d(TAG, "renderTask renderMode=$renderMode")
             onRequestRender()
             if (renderMode == ICanvasRenderer.RENDER_MODE_CONTINUOUSLY) {
                 post(this)
@@ -32,19 +31,17 @@ abstract class RenderExecutor : Executor(), SurfaceHolder.Callback {
         if (renderMode != ICanvasRenderer.RENDER_MODE_CONTINUOUSLY && renderMode != ICanvasRenderer.RENDER_MODE_WHEN_DIRTY) {
             throw IllegalArgumentException("renderMode must be RENDER_MODE_CONTINUOUSLY or RENDER_MODE_WHEN_DIRTY")
         }
-        if (isRunning()) {
-            throw IllegalStateException("You can not change renderMode when running")
+        if (isSurfaceAvailable) {
+            throw IllegalStateException("renderMode can not be changed after surface available")
         }
         this.renderMode = renderMode
     }
 
     override fun surfaceCreated(holder: SurfaceHolder) {
         isSurfaceAvailable = true
-        Log.e(TAG, "surfaceCreated")
     }
 
     override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
-        Log.e(TAG, "surfaceChanged renderMode=$renderMode")
         requestRender()
     }
 
