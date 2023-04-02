@@ -1,15 +1,15 @@
 package com.github.boybeak.canvas
 
 import android.view.SurfaceHolder
-import com.github.boybeak.canvas.executor.IExecutor
+import com.github.boybeak.canvas.executor.RenderExecutor
 
-abstract class AbsRenderer() : ICanvasRenderer {
+abstract class AbsRenderer : ICanvasRenderer {
 
     companion object {
         private const val TAG = "AbsRenderer"
     }
 
-    override fun onSurfaceCreated(holder: SurfaceHolder, executor: IExecutor) {
+    override fun onSurfaceCreated(holder: SurfaceHolder, executor: RenderExecutor) {
     }
 
     override fun onSurfaceChanged(
@@ -17,11 +17,10 @@ abstract class AbsRenderer() : ICanvasRenderer {
         format: Int,
         width: Int,
         height: Int,
-        executor: IExecutor
+        executor: RenderExecutor
     ) {
     }
 
-    override fun onSurfaceDestroyed(holder: SurfaceHolder, executor: IExecutor) {
+    override fun onSurfaceDestroyed(holder: SurfaceHolder, executor: RenderExecutor) {
     }
-
 }

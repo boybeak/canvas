@@ -4,13 +4,14 @@ import android.opengl.EGL14
 import android.util.Log
 import android.view.SurfaceHolder
 import com.github.boybeak.canvas.executor.IExecutor
+import com.github.boybeak.canvas.executor.RenderExecutor
 import javax.microedition.khronos.egl.EGL10
 import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.egl.EGLContext
 import javax.microedition.khronos.egl.EGLDisplay
 import javax.microedition.khronos.egl.EGLSurface
 
-abstract class OpenGLRenderer() : AbsRenderer() {
+abstract class OpenGLRenderer : AbsRenderer() {
 
     companion object {
         private const val TAG = "OpenGLRenderer"
@@ -62,7 +63,7 @@ abstract class OpenGLRenderer() : AbsRenderer() {
         egl.eglTerminate(display)
     }
 
-    override fun onSurfaceCreated(holder: SurfaceHolder, executor: IExecutor) {
+    override fun onSurfaceCreated(holder: SurfaceHolder, executor: RenderExecutor) {
         super.onSurfaceCreated(holder, executor)
         executor.post { createEGL(holder) }
     }
@@ -72,18 +73,22 @@ abstract class OpenGLRenderer() : AbsRenderer() {
         format: Int,
         width: Int,
         height: Int,
-        executor: IExecutor
+        executor: RenderExecutor
     ) {
         super.onSurfaceChanged(holder, format, width, height, executor)
         executor.post { onSurfaceChanged(egl, width, height) }
+        executor.requestRender()
     }
 
-    override fun onSurfaceDestroyed(holder: SurfaceHolder, executor: IExecutor) {
+    override fun onSurfaceDestroyed(holder: SurfaceHolder, executor: RenderExecutor) {
         super.onSurfaceDestroyed(holder, executor)
         destroyEGL()
     }
 
     override fun onRequestRender() {
+        if (!::eglSurface.isInitialized) {
+            return
+        }
         onDrawFrame(egl)
         egl.eglSwapBuffers(display, eglSurface)
     }

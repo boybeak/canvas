@@ -41,7 +41,6 @@ abstract class RenderExecutor : Executor(), SurfaceHolder.Callback {
     }
 
     override fun surfaceChanged(holder: SurfaceHolder, format: Int, width: Int, height: Int) {
-        requestRender()
     }
 
     override fun surfaceDestroyed(holder: SurfaceHolder) {
