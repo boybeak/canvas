@@ -31,13 +31,11 @@ open class CanvasView : SurfaceView {
 
         override fun onThreadDestroyed() {
             super.onThreadDestroyed()
-            runOnMyThread{
-                val cbs = ArrayList<Callback>(callbacks)
-                for (c in cbs) {
-                    c.onThreadDestroyed()
-                }
-                cbs.clear()
+            val cbs = ArrayList<Callback>(callbacks)
+            for (c in cbs) {
+                c.onThreadDestroyed()
             }
+            cbs.clear()
         }
 
         override fun surfaceCreated(holder: SurfaceHolder) {
@@ -126,6 +124,7 @@ open class CanvasView : SurfaceView {
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
         renderExecutor.stop()
+        callbacks.clear()
     }
 
     fun requestRender() {
