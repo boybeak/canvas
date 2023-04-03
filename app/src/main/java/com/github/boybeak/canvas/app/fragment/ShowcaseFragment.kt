@@ -25,6 +25,23 @@ class ShowcaseFragment(private val renderer: ICanvasRenderer, private val action
             setRenderer(renderer)
             setRenderMode(renderMode)
         }
+        canvasView.addCallback(object : CanvasView.Callback {
+            override fun onThreadCreated() {
+                Log.d(TAG, "onThreadCreated")
+            }
+
+            override fun onSurfaceCreated() {
+                Log.d(TAG, "onSurfaceCreated")
+            }
+
+            override fun onSurfaceDestroyed() {
+                Log.d(TAG, "onSurfaceDestroyed")
+            }
+
+            override fun onThreadDestroyed() {
+                Log.d(TAG, "onThreadDestroyed")
+            }
+        })
 
         view.findViewById<AppCompatButton>(R.id.actionBtn).apply {
             if (actionText.isNotEmpty()) {

@@ -21,7 +21,7 @@ open class CanvasView : SurfaceView {
         override fun onThreadCreated() {
             super.onThreadCreated()
             runOnMyThread{
-                val cbs = ArrayList<Callback>()
+                val cbs = ArrayList<Callback>(callbacks)
                 for (c in cbs) {
                     c.onThreadCreated()
                 }
@@ -32,7 +32,7 @@ open class CanvasView : SurfaceView {
         override fun onThreadDestroyed() {
             super.onThreadDestroyed()
             runOnMyThread{
-                val cbs = ArrayList<Callback>()
+                val cbs = ArrayList<Callback>(callbacks)
                 for (c in cbs) {
                     c.onThreadDestroyed()
                 }
@@ -43,7 +43,7 @@ open class CanvasView : SurfaceView {
         override fun surfaceCreated(holder: SurfaceHolder) {
             super.surfaceCreated(holder)
             runOnMyThread{
-                val cbs = ArrayList<Callback>()
+                val cbs = ArrayList<Callback>(callbacks)
                 for (c in cbs) {
                     c.onSurfaceCreated()
                 }
@@ -54,7 +54,7 @@ open class CanvasView : SurfaceView {
         override fun surfaceDestroyed(holder: SurfaceHolder) {
             super.surfaceDestroyed(holder)
             runOnMyThread{
-                val cbs = ArrayList<Callback>()
+                val cbs = ArrayList<Callback>(callbacks)
                 for (c in cbs) {
                     c.onSurfaceDestroyed()
                 }
