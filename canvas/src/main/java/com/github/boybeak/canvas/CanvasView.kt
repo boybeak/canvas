@@ -3,24 +3,72 @@ package com.github.boybeak.canvas
 import android.content.Context
 import android.os.Handler
 import android.util.AttributeSet
+import android.util.Log
 import android.view.SurfaceHolder
 import android.view.SurfaceView
 import com.github.boybeak.canvas.executor.Executor
 import com.github.boybeak.canvas.executor.RenderExecutor
+import java.util.LinkedList
 
 open class CanvasView : SurfaceView {
 
     companion object {
-        private const val TAG = "AbsCanvasView"
+        private const val TAG = "CanvasView"
     }
 
     private var renderer: ICanvasRenderer? = null
     private val renderExecutor = object : RenderExecutor() {
+        override fun onThreadCreated() {
+            super.onThreadCreated()
+            runOnMyThread{
+                val cbs = ArrayList<Callback>()
+                for (c in cbs) {
+                    c.onThreadCreated()
+                }
+                cbs.clear()
+            }
+        }
+
+        override fun onThreadDestroyed() {
+            super.onThreadDestroyed()
+            runOnMyThread{
+                val cbs = ArrayList<Callback>()
+                for (c in cbs) {
+                    c.onThreadDestroyed()
+                }
+                cbs.clear()
+            }
+        }
+
+        override fun surfaceCreated(holder: SurfaceHolder) {
+            super.surfaceCreated(holder)
+            runOnMyThread{
+                val cbs = ArrayList<Callback>()
+                for (c in cbs) {
+                    c.onSurfaceCreated()
+                }
+                cbs.clear()
+            }
+        }
+
+        override fun surfaceDestroyed(holder: SurfaceHolder) {
+            super.surfaceDestroyed(holder)
+            runOnMyThread{
+                val cbs = ArrayList<Callback>()
+                for (c in cbs) {
+                    c.onSurfaceDestroyed()
+                }
+                cbs.clear()
+            }
+
+        }
         override fun onRequestRender() {
             renderer?.onRequestRender()
         }
     }
     private val stateRememberCallback = StateRememberCallback()
+
+    private val callbacks = LinkedList<Callback>()
 
     constructor(context: Context?) : super(context)
     constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
@@ -86,6 +134,23 @@ open class CanvasView : SurfaceView {
 
     fun queueEvent(event: Runnable) {
         renderExecutor.post(event)
+    }
+
+    fun addCallback(callback: Callback) {
+        if (callbacks.contains(callback)) {
+            return
+        }
+        callbacks.add(callback)
+    }
+    fun removeCallback(callback: Callback) {
+        callbacks.remove(callback)
+    }
+
+    interface Callback {
+        fun onThreadCreated()
+        fun onSurfaceCreated()
+        fun onSurfaceDestroyed()
+        fun onThreadDestroyed()
     }
 
     private class StateRememberCallback : SurfaceHolder.Callback {

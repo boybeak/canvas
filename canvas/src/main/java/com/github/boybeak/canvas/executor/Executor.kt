@@ -4,7 +4,12 @@ import android.os.Handler
 import android.os.HandlerThread
 
 open class Executor : IExecutor {
-    private val renderThread = HandlerThread("Rendering")
+    private val renderThread = object : HandlerThread("Rendering") {
+        override fun onLooperPrepared() {
+            super.onLooperPrepared()
+            onThreadCreated()
+        }
+    }
     private val handler: Handler by lazy { Handler(renderThread.looper) }
     private var isRunning  = false
 
@@ -16,6 +21,7 @@ open class Executor : IExecutor {
     override fun stop() {
         renderThread.quit()
         isRunning = false
+        onThreadDestroyed()
     }
 
     override fun isRunning(): Boolean {
@@ -41,5 +47,8 @@ open class Executor : IExecutor {
             post(r)
         }
     }
+
+    open fun onThreadCreated() {}
+    open fun onThreadDestroyed() {}
 
 }
