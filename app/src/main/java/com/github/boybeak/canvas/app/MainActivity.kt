@@ -28,6 +28,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        findViewById<AppCompatButton>(R.id.glSurfaceBtn).setOnClickListener {
+            gotoActivity(GLSurfaceActivity::class.java)
+        }
+
         findViewById<AppCompatButton>(R.id.randomColor2dBtn).setOnClickListener {
             val random = Random(System.currentTimeMillis())
             fun nextColorBit(): Int {
@@ -51,16 +55,20 @@ class MainActivity : AppCompatActivity() {
             fun nextColorBit(): Float {
                 return random.nextInt(100) / 100F
             }
+            var index = 0
             showcase(SimpleOpenGLRenderer(), text = "change") {
-                it.queueEvent {
-                    val r = nextColorBit()
-                    val g = nextColorBit()
-                    val b = nextColorBit()
-                    Log.d(TAG, "surfaceCreated r=$r, g=$g, b=$b")
-                    GLES20.glClearColor(r, g, b, 1F)
-                    GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
+                if(index % 2 == 0) {
+                    it.queueEvent {
+                        val r = nextColorBit()
+                        val g = nextColorBit()
+                        val b = nextColorBit()
+                        Log.d(TAG, "surfaceCreated r=$r, g=$g, b=$b")
+                        GLES20.glClearColor(r, g, b, 1F)
+                        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT)
+                    }
                 }
                 it.requestRender()
+                index++
             }
             Toast.makeText(this, "Click button to change color", Toast.LENGTH_LONG).show()
         }
