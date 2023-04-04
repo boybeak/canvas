@@ -2,7 +2,6 @@ package com.github.boybeak.canvas.executor
 
 import android.view.SurfaceHolder
 import com.github.boybeak.canvas.ICanvasRenderer
-import com.github.boybeak.canvas.RenderMode
 
 abstract class RenderExecutor : Executor(), SurfaceHolder.Callback {
 
@@ -26,7 +25,7 @@ abstract class RenderExecutor : Executor(), SurfaceHolder.Callback {
     private var isSurfaceAvailable = false
     private val isContinuouslyRendering: Boolean get() = renderMode == ICanvasRenderer.RENDER_MODE_CONTINUOUSLY && isSurfaceAvailable
 
-    fun setRenderMode(@RenderMode renderMode: Int) {
+    fun setRenderMode(renderMode: Int) {
         if (renderMode != ICanvasRenderer.RENDER_MODE_CONTINUOUSLY && renderMode != ICanvasRenderer.RENDER_MODE_WHEN_DIRTY) {
             throw IllegalArgumentException("renderMode must be RENDER_MODE_CONTINUOUSLY or RENDER_MODE_WHEN_DIRTY")
         }

@@ -109,7 +109,7 @@ open class CanvasView : SurfaceView {
         this.renderer = renderer
     }
 
-    fun setRenderMode(@RenderMode renderMode: Int) {
+    fun setRenderMode(renderMode: Int) {
         if (renderer == null) {
             throw IllegalStateException("You must set renderer before calling setRenderMode")
         }

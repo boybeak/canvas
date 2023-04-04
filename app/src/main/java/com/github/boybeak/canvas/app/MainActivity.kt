@@ -92,7 +92,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun <T : ICanvasRenderer> showcase(renderer: T, @RenderMode renderMode: Int = ICanvasRenderer.RENDER_MODE_WHEN_DIRTY,
+    private fun <T : ICanvasRenderer> showcase(renderer: T, renderMode: Int = ICanvasRenderer.RENDER_MODE_WHEN_DIRTY,
                                                text: String = "", onClick: ((CanvasView) -> Unit)? = null) {
         ShowcaseFragment(renderer, text, renderMode, onClick).show(supportFragmentManager, TAG)
     }

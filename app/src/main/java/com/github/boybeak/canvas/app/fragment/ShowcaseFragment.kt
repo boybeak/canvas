@@ -3,16 +3,14 @@ package com.github.boybeak.canvas.app.fragment
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.view.View.OnClickListener
 import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.DialogFragment
 import com.github.boybeak.canvas.CanvasView
 import com.github.boybeak.canvas.ICanvasRenderer
-import com.github.boybeak.canvas.RenderMode
 import com.github.boybeak.canvas.app.R
 
 class ShowcaseFragment(private val renderer: ICanvasRenderer, private val actionText: String = "",
-                       @RenderMode private val renderMode: Int = ICanvasRenderer.RENDER_MODE_WHEN_DIRTY,
+                       private val renderMode: Int = ICanvasRenderer.RENDER_MODE_WHEN_DIRTY,
                        private val onClick: ((CanvasView) -> Unit)? = null) : DialogFragment(R.layout.fragment_showcase) {
 
     companion object {
