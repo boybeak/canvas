@@ -8,7 +8,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="320dp"
         android:layout_height="wrap_content">
-        <com.github.boybeak.canvas.AbsCanvasView
+        <com.github.boybeak.canvas.CanvasView
             android:id="@+id/surfaceView"
             android:layout_width="0dp"
             android:layout_height="0dp"

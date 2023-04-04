@@ -8,7 +8,7 @@ import com.github.boybeak.canvas.app.texture.BitmapTexture
 import javax.microedition.khronos.egl.EGL10
 import javax.microedition.khronos.egl.EGLConfig
 
-class ImageRenderer(private val bitmap: Bitmap) : OpenGLRenderer(ICanvasRenderer.RENDER_MODE_WHEN_DIRTY) {
+class ImageRenderer(private val bitmap: Bitmap) : OpenGLRenderer() {
 
     private val vertexShader = """
         attribute vec4 av_Position;//顶点位置
